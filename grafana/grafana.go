@@ -44,114 +44,104 @@ cat <<GRAFANA_DASHBOARD_DEFINITION > /home/ec2-user/dashboard.json
 		"sharedCrosshair": false,
 		"rows": [
 			{
-			"collapse": false,
-			"editable": true,
-			"height": "250px",
-			"panels": [
-				{
-				"aliasColors": {},
-				"bars": false,
-				"datasource": "lambda",
+				"collapse": false,
 				"editable": true,
-				"error": false,
-				"fill": 1,
-				"grid": {
-					"threshold1": null,
-					"threshold1Color": "rgba(216, 200, 27, 0.27)",
-					"threshold2": null,
-					"threshold2Color": "rgba(234, 112, 112, 0.22)"
-				},
-				"id": 1,
-				"isNew": true,
-				"legend": {
-					"avg": false,
-					"current": false,
-					"max": false,
-					"min": false,
-					"show": true,
-					"total": false,
-					"values": false
-				},
-				"lines": true,
-				"linewidth": 2,
-				"links": [],
-				"nullPointMode": "connected",
-				"percentage": false,
-				"pointradius": 5,
-				"points": false,
-				"renderer": "flot",
-				"seriesOverrides": [],
-				"span": 12,
-				"stack": false,
-				"steppedLine": false,
-				"targets": [
+				"height": "250px",
+				"panels": [
 					{
-					"dsType": "influxdb",
-					"groupBy": [
-						{
-							"type": "time",
-							"params": [
-								"$interval"
-							]
-						}
-					],
-					"measurement": "HelloWorld.count",
-					"policy": "default",
-					"query": "SELECT count(\"value\") FROM \"HelloWorld.count\"",
-					"rawQuery": false,
-					"refId": "A",
-					"resultFormat": "time_series",
-					"select": [
-						[
-						{
-							"params": [
-							"value"
-							],
-							"type": "field"
+						"aliasColors": {},
+						"bars": false,
+						"datasource": "lambda",
+						"editable": true,
+						"error": false,
+						"fill": 1,
+						"grid": {
+							"threshold1": null,
+							"threshold1Color": "rgba(216, 200, 27, 0.27)",
+							"threshold2": null,
+							"threshold2Color": "rgba(234, 112, 112, 0.22)"
 						},
-						{
-							"params": [],
-							"type": "sum"
-						}
+						"id": 1,
+						"isNew": true,
+						"legend": {
+							"avg": false,
+							"current": false,
+							"max": false,
+							"min": false,
+							"show": true,
+							"total": false,
+							"values": false
+						},
+						"lines": true,
+						"linewidth": 2,
+						"links": [],
+						"nullPointMode": "connected",
+						"percentage": false,
+						"pointradius": 5,
+						"points": false,
+						"renderer": "flot",
+						"seriesOverrides": [],
+						"span": 12,
+						"stack": false,
+						"steppedLine": false,
+						"targets": [
+							{
+								"dsType": "influxdb",
+								"groupBy": [],
+								"measurement": "HelloWorld.count",
+								"policy": "default",
+								"query": "SELECT sum(\"value\") FROM \"HelloWorld.count\" WHERE $timeFilter GROUP BY time()",
+								"rawQuery": false,
+								"refId": "A",
+								"resultFormat": "time_series",
+								"select": [
+									[
+										{
+											"type": "field",
+											"params": [
+												"value"
+											]
+										}
+									]
+								],
+								"tags": [],
+								"hide": false
+							}
+						],
+						"timeFrom": null,
+						"timeShift": null,
+						"title": "Lambda Call Count",
+						"tooltip": {
+							"msResolution": true,
+							"shared": true,
+							"sort": 0,
+							"value_type": "cumulative"
+						},
+						"type": "graph",
+						"xaxis": {
+							"show": true
+						},
+						"yaxes": [
+							{
+								"format": "short",
+								"label": null,
+								"logBase": 1,
+								"max": null,
+								"min": null,
+								"show": true
+							},
+							{
+								"format": "short",
+								"label": null,
+								"logBase": 1,
+								"max": null,
+								"min": null,
+								"show": true
+							}
 						]
-					],
-					"tags": []
 					}
 				],
-				"timeFrom": null,
-				"timeShift": null,
-				"title": "Lambda Call Count",
-				"tooltip": {
-					"msResolution": true,
-					"shared": true,
-					"sort": 0,
-					"value_type": "cumulative"
-				},
-				"type": "graph",
-				"xaxis": {
-					"show": true
-				},
-				"yaxes": [
-					{
-					"format": "short",
-					"label": null,
-					"logBase": 1,
-					"max": null,
-					"min": null,
-					"show": true
-					},
-					{
-					"format": "short",
-					"label": null,
-					"logBase": 1,
-					"max": null,
-					"min": null,
-					"show": true
-					}
-				]
-				}
-			],
-			"title": "Row"
+				"title": "Row"
 			}
 		],
 		"time": {
@@ -160,27 +150,27 @@ cat <<GRAFANA_DASHBOARD_DEFINITION > /home/ec2-user/dashboard.json
 		},
 		"timepicker": {
 			"refresh_intervals": [
-			"5s",
-			"10s",
-			"30s",
-			"1m",
-			"5m",
-			"15m",
-			"30m",
-			"1h",
-			"2h",
-			"1d"
+				"5s",
+				"10s",
+				"30s",
+				"1m",
+				"5m",
+				"15m",
+				"30m",
+				"1h",
+				"2h",
+				"1d"
 			],
 			"time_options": [
-			"5m",
-			"15m",
-			"1h",
-			"6h",
-			"12h",
-			"24h",
-			"2d",
-			"7d",
-			"30d"
+				"5m",
+				"15m",
+				"1h",
+				"6h",
+				"12h",
+				"24h",
+				"2d",
+				"7d",
+				"30d"
 			]
 		},
 		"templating": {
@@ -189,6 +179,7 @@ cat <<GRAFANA_DASHBOARD_DEFINITION > /home/ec2-user/dashboard.json
 		"annotations": {
 			"list": []
 		},
+  	"refresh": "5s",
 		"schemaVersion": 12,
 		"version": 1,
 		"links": [],
