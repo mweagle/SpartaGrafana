@@ -12,29 +12,7 @@ vet: generate
 	go tool vet -composites=false *.go
 
 get: clean
-	rm -rf $(GOPATH)/src/github.com/aws/aws-sdk-go
-	git clone --depth=1 https://github.com/aws/aws-sdk-go $(GOPATH)/src/github.com/aws/aws-sdk-go
-
-	rm -rf $(GOPATH)/src/github.com/go-ini/ini
-	git clone --depth=1 https://github.com/go-ini/ini $(GOPATH)/src/github.com/go-ini/ini
-
-	rm -rf $(GOPATH)/src/github.com/jmespath/go-jmespath
-	git clone --depth=1 https://github.com/jmespath/go-jmespath $(GOPATH)/src/github.com/jmespath/go-jmespath
-
-	rm -rf $(GOPATH)/src/github.com/Sirupsen/logrus
-	git clone --depth=1 https://github.com/Sirupsen/logrus $(GOPATH)/src/github.com/Sirupsen/logrus
-
-	rm -rf $(GOPATH)/src/github.com/crewjam/go-cloudformation
-	git clone --depth=1 https://github.com/crewjam/go-cloudformation $(GOPATH)/src/github.com/crewjam/go-cloudformation
-
-	rm -rf $(GOPATH)/src/github.com/spf13/cobra
-	git clone --depth=1 https://github.com/spf13/cobra $(GOPATH)/src/github.com/spf13/cobra
-
-	rm -rf $(GOPATH)/src/github.com/spf13/pflag
-	git clone --depth=1 https://github.com/spf13/pflag $(GOPATH)/src/github.com/spf13/pflag
-
-	rm -rf $(GOPATH)/src/github.com/asaskevich/govalidator
-	git clone --depth=1 https://github.com/asaskevich/govalidator $(GOPATH)/src/github.com/asaskevich/govalidator
+	godep restore
 
 build: get generate vet
 	go build .
