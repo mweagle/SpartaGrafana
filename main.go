@@ -144,6 +144,20 @@ func main() {
 	lambdaFn := sparta.NewLambda(iamLambdaRole,
 		helloWorld,
 		nil)
+	lambdaFn.Decorator = func(serviceName string,
+		lambdaResourceName string,
+		lambdaResource gocf.LambdaFunction,
+		resourceMetadata map[string]interface{},
+		S3Bucket string,
+		S3Key string,
+		buildID string,
+		template *gocf.Template,
+		context map[string]interface{},
+		logger *logrus.Logger) error {
+
+		resourceMetadata["GrafanaHost"] = gocf.ImportValue(gocf.String(GrafanaDNSNameOutput))
+		return nil
+	}
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 	err := sparta.MainEx("SpartaGrafanaPublisher",
 		fmt.Sprintf("Sparta application that provisions and publishes to a Grafana instance"),
