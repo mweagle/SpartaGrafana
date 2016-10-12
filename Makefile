@@ -27,7 +27,7 @@ explore:
 	go run main.go --level debug explore
 
 provision: generate vet
-	go run main.go provision --level info --s3Bucket $(S3_BUCKET)
+	go run main.go provision --level info --s3Bucket $(S3_BUCKET) --key $(SPARTA_SSH_KEY)
 
 provisionShort: generate vet
 	go run main.go provision -s weagle --noop -l debug

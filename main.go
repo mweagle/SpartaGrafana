@@ -36,6 +36,9 @@ var grafanaStackArn = []gocf.Stringable{gocf.String("arn:aws:cloudformation:"),
 	gocf.String(GrafanaStackName),
 	gocf.String("/*")}
 
+// SSHKeyName is the SSH KeyName to use when provisioning new EC2 instance
+var SSHKeyName string
+
 ////////////////////////////////////////////////////////////////////////////////
 var helloWorldCounterMetric metrics.Counter
 
@@ -93,7 +96,7 @@ func PostBuildHook(context map[string]interface{},
 	logger *logrus.Logger) error {
 
 	// Get the grafana template && make sure it exists...
-	grafanaTemplate, grafanaTemplateErr := grafana.Stack("sparta-test", GrafanaDNSNameOutput)
+	grafanaTemplate, grafanaTemplateErr := grafana.Stack(SSHKeyName, GrafanaDNSNameOutput)
 	if nil != grafanaTemplateErr {
 		return grafanaTemplateErr
 	}
@@ -105,6 +108,7 @@ func PostBuildHook(context map[string]interface{},
 			grafanaTemplate,
 			S3Bucket,
 			keyName,
+			nil,
 			time.Now(),
 			awsSession,
 			logger)
@@ -113,7 +117,7 @@ func PostBuildHook(context map[string]interface{},
 		}
 
 		logger.WithFields(logrus.Fields{
-			"GrafanaStack2": *stack,
+			"GrafanaStack": *stack,
 		}).Info("Created Grafana Stack")
 
 	} else {
@@ -126,6 +130,13 @@ func PostBuildHook(context map[string]interface{},
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 func main() {
+
+	// And add the SSHKeyName option to the provision step
+	sparta.CommandLineOptions.Provision.Flags().StringVarP(&SSHKeyName,
+		"key",
+		"k",
+		"",
+		"SSH Key Name to use for EC2 instances")
 
 	exp.Exp(metrics.DefaultRegistry)
 
