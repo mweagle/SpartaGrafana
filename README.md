@@ -1,10 +1,12 @@
 # SpartaGrafana
 
+![Grafana Log](/resources/GrafanaGraph.png?raw=true "Grafana Log")
+
 *Note*: Requires Sparta 0.9.2 or later
 
 This is a multiple CloudFormation-stack [Sparta](http://gosparta.io)-based application that includes provisioning a [Grafana](http://grafana.org) host running on a single EC2 instance.
 
-The Grafana service is provisioned via a [WorkflowHook]() that defines and provisions a separate CloudFormation stack. The *GrafanaStack* exports the EC2 hostname's PublicDNS name which is then referenced by the `HelloWorld` lambda' function's metadata. This binding ensures that the *GrafanaStack* cannot be deleted until the referring Sparta application (*SpartaGrafanaPublisher*) is deleted.
+The Grafana service is provisioned via a [WorkflowHook](https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks) that defines and provisions a separate CloudFormation stack. The *GrafanaStack* exports the EC2 hostname's PublicDNS name which is then referenced by the `HelloWorld` lambda' function's metadata. This binding ensures that the *GrafanaStack* cannot be deleted until the referring Sparta application (*SpartaGrafanaPublisher*) is deleted.
 
 The *SpartaGrafanaPublisher* discovers the `PublicDNSName` during `init()` by querying CloudFormation:
 
