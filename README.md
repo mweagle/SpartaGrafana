@@ -1,6 +1,6 @@
 # SpartaGrafana
 
-![Grafana Log](/resources/GrafanaGraph.png?raw=true "Grafana Log")
+![Grafana Log](/resources/GrafanaMetrics.gif?raw=true "Grafana Metrics")
 
 *Note*: Requires Sparta 0.9.2 or later
 
