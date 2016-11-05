@@ -54,7 +54,7 @@ cat <<GRAFANA_DASHBOARD_DEFINITION > /home/ec2-user/dashboard.json
 						"datasource": "lambda",
 						"editable": true,
 						"error": false,
-						"fill": 1,
+						"fill": 2,
 						"grid": {
 							"threshold1": null,
 							"threshold1Color": "rgba(216, 200, 27, 0.27)",
@@ -73,7 +73,7 @@ cat <<GRAFANA_DASHBOARD_DEFINITION > /home/ec2-user/dashboard.json
 							"values": false
 						},
 						"lines": true,
-						"linewidth": 2,
+						"linewidth": 1,
 						"links": [],
 						"nullPointMode": "connected",
 						"percentage": false,
@@ -82,30 +82,37 @@ cat <<GRAFANA_DASHBOARD_DEFINITION > /home/ec2-user/dashboard.json
 						"renderer": "flot",
 						"seriesOverrides": [],
 						"span": 12,
-						"stack": false,
-						"steppedLine": false,
+						"stack": true,
+						"steppedLine": true,
 						"targets": [
 							{
 								"dsType": "influxdb",
-								"groupBy": [],
+								"groupBy": [
+									{
+										"type": "tag",
+										"params": [
+											"lambda"
+										]
+									}
+								],
+								"hide": false,
 								"measurement": "HelloWorld.count",
 								"policy": "default",
-								"query": "SELECT sum(\"value\") FROM \"HelloWorld.count\" WHERE $timeFilter GROUP BY time()",
+								"query": "SELECT sum(\"value\") FROM \"HelloWorld.count\" WHERE  GROUP BY time()",
 								"rawQuery": false,
 								"refId": "A",
 								"resultFormat": "time_series",
 								"select": [
 									[
 										{
-											"type": "field",
 											"params": [
 												"value"
-											]
+											],
+											"type": "field"
 										}
 									]
 								],
-								"tags": [],
-								"hide": false
+								"tags": []
 							}
 						],
 						"timeFrom": null,
@@ -145,7 +152,7 @@ cat <<GRAFANA_DASHBOARD_DEFINITION > /home/ec2-user/dashboard.json
 			}
 		],
 		"time": {
-			"from": "now-15m",
+			"from": "now-5m",
 			"to": "now"
 		},
 		"timepicker": {

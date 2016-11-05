@@ -15,6 +15,7 @@ import (
 	"github.com/rcrowley/go-metrics"
 	"github.com/rcrowley/go-metrics/exp"
 	"github.com/vrischmann/go-metrics-influxdb"
+	"math/rand"
 	"net/http"
 	"os"
 	"time"
@@ -60,13 +61,20 @@ func init() {
 				if *eachOutput.OutputKey == GrafanaDNSNameOutput {
 					influxHost := fmt.Sprintf("http://%s:8086", *eachOutput.OutputValue)
 					fmt.Printf("Setting up InfluxDB publisher: %s\n", influxHost)
-					go influxdb.InfluxDB(
+
+					r := rand.New(rand.NewSource(time.Now().UnixNano()))
+					tags := map[string]string{
+						"lambda": fmt.Sprintf("λ-%d", r.Int63()),
+					}
+
+					go influxdb.InfluxDBWithTags(
 						metrics.DefaultRegistry, // metrics registry
 						time.Second*5,           // interval
 						influxHost,              // the InfluxDB url
 						"lambda",                // your InfluxDB database
 						"",                      // your InfluxDB user
-						"",                      // your InfluxDB password
+						"",                      // your InfluxDB password,
+						tags,
 					)
 				}
 			}
