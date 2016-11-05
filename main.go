@@ -163,6 +163,13 @@ func main() {
 	lambdaFn := sparta.NewLambda(iamLambdaRole,
 		helloWorld,
 		nil)
+
+	stage := sparta.NewStage("dev")
+	apiGateway := sparta.NewAPIGateway("SpartaGrafana", stage)
+	apiGatewayResource, _ := apiGateway.NewResource("/hello/grafana", lambdaFn)
+	apiGatewayResource.NewMethod("GET", http.StatusOK)
+
+	// Provision the EC2 hosting Grafana
 	lambdaFn.Decorator = func(serviceName string,
 		lambdaResourceName string,
 		lambdaResource gocf.LambdaFunction,
@@ -181,7 +188,7 @@ func main() {
 	err := sparta.MainEx("SpartaGrafanaPublisher",
 		fmt.Sprintf("Sparta application that provisions and publishes to a Grafana instance"),
 		lambdaFunctions,
-		nil,
+		apiGateway,
 		nil,
 		hooks)
 	if err != nil {
