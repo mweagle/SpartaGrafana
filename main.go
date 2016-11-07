@@ -45,7 +45,7 @@ var helloWorldCounterMetric metrics.Counter
 
 func init() {
 	if "" != os.Getenv("AWS_LAMBDA_FUNCTION_VERSION") {
-		// Go get the outputs of the
+		// Go get the outputs of the GrafanaStack
 		awsSession := session.New()
 		cloudFormationSvc := cloudformation.New(awsSession)
 		params := &cloudformation.DescribeStacksInput{
