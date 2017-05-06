@@ -4,6 +4,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"math/rand"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -11,14 +17,11 @@ import (
 	gocf "github.com/crewjam/go-cloudformation"
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	spartaS3 "github.com/mweagle/Sparta/aws/s3"
 	"github.com/mweagle/SpartaGrafana/grafana"
 	"github.com/rcrowley/go-metrics"
 	"github.com/rcrowley/go-metrics/exp"
 	"github.com/vrischmann/go-metrics-influxdb"
-	"math/rand"
-	"net/http"
-	"os"
-	"time"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,6 +98,7 @@ func helloWorld(event *json.RawMessage,
 	fmt.Fprint(w, "Hello World")
 }
 
+// PostBuildHook is the hook used to annotate the template
 func PostBuildHook(context map[string]interface{},
 	serviceName string,
 	S3Bucket string,
@@ -112,10 +116,35 @@ func PostBuildHook(context map[string]interface{},
 	if !noop {
 		// Go make the stack...
 		keyName := spartaCF.CloudFormationResourceName("Grafana", "Grafana")
-		stack, stackErr := spartaCF.ConvergeStackState(GrafanaStackName,
-			grafanaTemplate,
+		tempFile, tempFileErr := ioutil.TempFile("", "grafana")
+		if nil != tempFileErr {
+			tempFile.Close()
+			return tempFileErr
+		}
+
+		// Save the template...
+		cfTemplate, cfTemplateErr := json.Marshal(grafanaTemplate)
+		if nil != cfTemplateErr {
+			return cfTemplateErr
+		}
+		_, writeErr := tempFile.Write(cfTemplate)
+		if nil != writeErr {
+			return writeErr
+		}
+		tempFile.Close()
+
+		uploadLocation, uploadURLErr := spartaS3.UploadLocalFileToS3(tempFile.Name(),
+			awsSession,
 			S3Bucket,
 			keyName,
+			logger)
+		if nil != uploadURLErr {
+			return uploadURLErr
+		}
+
+		stack, stackErr := spartaCF.ConvergeStackState(GrafanaStackName,
+			grafanaTemplate,
+			uploadLocation,
 			nil,
 			time.Now(),
 			awsSession,
@@ -190,7 +219,8 @@ func main() {
 		lambdaFunctions,
 		apiGateway,
 		nil,
-		hooks)
+		hooks,
+		false)
 	if err != nil {
 		os.Exit(1)
 	}
