@@ -1,9 +1,10 @@
 package grafana
 
 import (
-	gocf "github.com/crewjam/go-cloudformation"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	"strings"
+
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 // http://www.netinstructions.com/installing-influxdb-and-grafana-on-an-ec2-instance/
@@ -198,6 +199,8 @@ GRAFANA_DASHBOARD_DEFINITION
 curl -i -u admin:admin -H "Content-Type: application/json" -X POST --data @/home/ec2-user/dashboard.json http://localhost:3000/api/dashboards/db
 `
 
+// Stack is a single function that's responsible for provisioning
+// a Grafana instance
 func Stack(sshKeyName string, grafanaDNSName string) (*gocf.Template, error) {
 	grafanaStack := gocf.NewTemplate()
 
@@ -206,22 +209,22 @@ func Stack(sshKeyName string, grafanaDNSName string) (*gocf.Template, error) {
 		GroupDescription: gocf.String("Grafana SG"),
 		SecurityGroupIngress: &gocf.EC2SecurityGroupRuleList{
 			gocf.EC2SecurityGroupRule{
-				CidrIp:     gocf.String("0.0.0.0/0"),
+				CidrIP:     gocf.String("0.0.0.0/0"),
 				FromPort:   gocf.Integer(22),
 				ToPort:     gocf.Integer(22),
-				IpProtocol: gocf.String("tcp"),
+				IPProtocol: gocf.String("tcp"),
 			},
 			gocf.EC2SecurityGroupRule{
-				CidrIp:     gocf.String("0.0.0.0/0"),
+				CidrIP:     gocf.String("0.0.0.0/0"),
 				FromPort:   gocf.Integer(3000),
 				ToPort:     gocf.Integer(3000),
-				IpProtocol: gocf.String("tcp"),
+				IPProtocol: gocf.String("tcp"),
 			},
 			gocf.EC2SecurityGroupRule{
-				CidrIp:     gocf.String("0.0.0.0/0"),
+				CidrIP:     gocf.String("0.0.0.0/0"),
 				FromPort:   gocf.Integer(8086),
 				ToPort:     gocf.Integer(8086),
-				IpProtocol: gocf.String("tcp"),
+				IPProtocol: gocf.String("tcp"),
 			},
 		},
 	}
@@ -238,13 +241,12 @@ func Stack(sshKeyName string, grafanaDNSName string) (*gocf.Template, error) {
 		SecurityGroups:   gocf.StringList(gocf.Ref("GrafanaSG")),
 		UserData:         gocf.Base64(userdata),
 		InstanceType:     gocf.String("m3.xlarge"),
-		ImageId:          gocf.String("ami-dd4894bd"),
+		ImageID:          gocf.String("ami-dd4894bd"),
 		AvailabilityZone: gocf.String(""),
-		Tags: []gocf.ResourceTag{
-			gocf.ResourceTag{
-				Key:   gocf.String("Name"),
-				Value: gocf.String("Grafana"),
-			},
+		Tags: &gocf.TagList{gocf.Tag{
+			Key:   gocf.String("Name"),
+			Value: gocf.String("Grafana"),
+		},
 		},
 	}
 	grafanaStack.AddResource("GrafanaEC2", grafanaEC2)
