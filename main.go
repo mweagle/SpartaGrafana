@@ -14,11 +14,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
-	gocf "github.com/crewjam/go-cloudformation"
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
 	"github.com/mweagle/SpartaGrafana/grafana"
+	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/rcrowley/go-metrics"
 	"github.com/rcrowley/go-metrics/exp"
 	"github.com/vrischmann/go-metrics-influxdb"
@@ -214,7 +214,8 @@ func main() {
 		return nil
 	}
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
-	err := sparta.MainEx("SpartaGrafanaPublisher",
+	stackName := spartaCF.UserScopedStackName("SpartaGrafanaPublisher")
+	err := sparta.MainEx(stackName,
 		fmt.Sprintf("Sparta application that provisions and publishes to a Grafana instance"),
 		lambdaFunctions,
 		apiGateway,
