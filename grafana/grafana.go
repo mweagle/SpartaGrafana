@@ -207,20 +207,20 @@ func Stack(sshKeyName string, grafanaDNSName string) (*gocf.Template, error) {
 	// The SG we'll use for the Import/Export name
 	grafanaSG := gocf.EC2SecurityGroup{
 		GroupDescription: gocf.String("Grafana SG"),
-		SecurityGroupIngress: &gocf.EC2SecurityGroupRuleList{
-			gocf.EC2SecurityGroupRule{
+		SecurityGroupIngress: &gocf.EC2SecurityGroupIngressPropertyList{
+			gocf.EC2SecurityGroupIngressProperty{
 				CidrIP:     gocf.String("0.0.0.0/0"),
 				FromPort:   gocf.Integer(22),
 				ToPort:     gocf.Integer(22),
 				IPProtocol: gocf.String("tcp"),
 			},
-			gocf.EC2SecurityGroupRule{
+			gocf.EC2SecurityGroupIngressProperty{
 				CidrIP:     gocf.String("0.0.0.0/0"),
 				FromPort:   gocf.Integer(3000),
 				ToPort:     gocf.Integer(3000),
 				IPProtocol: gocf.String("tcp"),
 			},
-			gocf.EC2SecurityGroupRule{
+			gocf.EC2SecurityGroupIngressProperty{
 				CidrIP:     gocf.String("0.0.0.0/0"),
 				FromPort:   gocf.Integer(8086),
 				ToPort:     gocf.Integer(8086),
